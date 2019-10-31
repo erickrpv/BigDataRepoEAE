@@ -1,0 +1,44 @@
+---
+title: "Erupciones Old Faithful"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    social: menu
+    source_code: embed
+runtime: shiny
+---
+
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+library(datasets)
+data(faithful)
+```
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+
+Tiempo de espera entre erupciones y la duracion de la erupcion para la
+Old Faithful geiser en Parque Nacional Yellowstone, Wyoming, USA.
+
+```{r}
+selectInput("n_interrumpcion", label = "Numero de bins:",
+            choices = c(30, 40, 60, 80), selected = 20)
+
+sliderInput("ba_ajuste", label = "Ajuste Bandancha:",
+            min = 5, max = 10, value = 2, step = 5)
+```
+
+Column
+-----------------------------------------------------------------------
+
+### Duracion de Erupcion Geyser
+
+```{r}
+renderPlot({
+  hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$n_interrumpcion),
+       xlab = "Duracion (minutos)", main = "Duracion Erupcion Geyser", col = "blue")
+  
+  dens <- density(faithful$eruptions, adjust = input$ba_ajuste)
+  lines(dens, col = "red")
+})
+```
